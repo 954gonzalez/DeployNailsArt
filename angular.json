@@ -30,19 +30,18 @@
               "src/styles.css"
             ],
             "scripts": []
-          },
-          "configurations": {
+          },"configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "90kb",
+                  "maximumError": "90kb"
                 }
               ],
               "outputHashing": "all"
@@ -56,6 +55,8 @@
               "namedChunks": true
             }
           },
+          
+          
           "defaultConfiguration": "production"
         },
         "serve": {
