@@ -10,7 +10,7 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class UsuarioService {
-  private apiUrl = 'http://localhost:4000/api';
+  private apiUrl = 'https://deploy-backend-nailsart.onrender.com/api';
   private citasSubject = new BehaviorSubject<any[]>([]);
   citas$ = this.citasSubject.asObservable();
 
