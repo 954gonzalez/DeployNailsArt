@@ -566,6 +566,10 @@ margin-left: 50px;
 display: flex;
 justify-content: center;
 }
+.modal-contenedor{
+  overflow-y: auto; 
+  max-height: calc(80vh - 60px); 
+}
 .datosCita{
   display: flex;
   flex-direction: column;
@@ -584,6 +588,37 @@ justify-content: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   margin-top: 10px;
+  box-shadow:   8px 8px rgba(117, 45, 102, 0.685);
+  border: 1px solid #631878;
+  border-radius: 20px;
+  width: 450px;
+  height: 140px;
 }
 
+.buttonPagar {
+  padding: 15px 30px;
+  font-size: 18px;
+  background-color: #631878;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0px 0px 10px rgba(99, 24, 120, 0.5); /* sombra inicial */
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 20px rgba(99, 24, 120, 0.7); /* sombra más oscura y más larga */
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(99, 24, 120, 0.9); /* sombra aún más oscura y larga */
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(99, 24, 120, 0.7); /* sombra normal */
+  }
+}

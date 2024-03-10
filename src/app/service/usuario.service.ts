@@ -10,7 +10,7 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class UsuarioService {
-  private apiUrl = 'https://deploy-backend-nailsart.onrender.com/api';
+  private apiUrl = 'http://localhost:4000/api';
   private citasSubject = new BehaviorSubject<any[]>([]);
   citas$ = this.citasSubject.asObservable();
 
@@ -73,8 +73,7 @@ export class UsuarioService {
     this.usuarioInfoSubject.next(usuarioInfo);
   
   }
-  
-  
+
   //estas son las peticiones de la agendacion de citas
 createCita(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/crearCita`, data, { headers: { 'Content-Type': 'application/json' } });
@@ -100,24 +99,31 @@ obtenerCitasPorManicurista(idManicurista: number, fecha: string): Observable<any
     const data = { email }; // Incluye el correo electrónico en el cuerpo de la solicitud
     return this.http.post(`${this.apiUrl}/sendEmailWithEmpleadosData`, data);
   }
-
+  //historial
+  obtenerHistorialCitasUsuario(usuarioId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/historial/${usuarioId}`);
+  }
 // UsuarioService consulta de favoritos
 getFavoritaManicuristas(userEmail: string): Observable<any[]> {
   const url = `${this.apiUrl}/manicurista/favorita/${userEmail}`;
   return this.http.get<any[]>(url);
 }
 
+
 //cambio de estado 
 cambiarEstadoCita(idCita: number, nuevoEstado: string): Observable<any> {
-return this.http.put<any>(`${this.apiUrl}/cambioDeEstado`, { id_cita: idCita, nuevo_estado: nuevoEstado });
+  return this.http.put<any>(`${this.apiUrl}/cambioDeEstado`, { id_cita: idCita, nuevo_estado: nuevoEstado });
 }
+
 obtenerCitasPorId(idCita: number): Observable<any> {
   return this.http.get<any>(`${this.apiUrl}/citas/${idCita}`);
 }
 obtenerCitasUsuario(): Observable<any> {
   return this.http.get<any>(`${this.apiUrl}/citasUsuario`);
 }
-
+eliminarCita(idCita: number): Observable<any> {
+  return this.http.delete<any>(`${this.apiUrl}/eliminarCita/${idCita}`);
+}
 //configuracion
 getConfiguracion(): Observable<any> {
   return this.http.get<any>(`${this.apiUrl}/Configuracion`);
@@ -133,13 +139,35 @@ actualizarPrecioServicio(idServicio: number, nuevoPrecio: number): Observable<an
 eliminarServicio(id_servicio: number): Observable<any> {
   return this.http.delete(`${this.apiUrl}/eliminarServicio/${id_servicio}`);
 }
-//chat  
-apiUrl2 = 'http://localhost:4000/chat'; // La URL de tu endpoint en el servidor Node.js
+// Servicio Angular para obtener citas por fecha
+
+//Notificaciones 
+obtenerCitasUsuarios(userId: number): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/citas/${userId}`);
+}
+
+// Obtener servicios recientes
+obtenerServiciosRecientes(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/servicios/recientes`);
+}
+
+// Obtener servicios con precios actualizados
+obtenerServiciosConPreciosActualizados(ultimaConsulta: Date): Observable<any[]> {
+  return this.http.post<any[]>(`${this.apiUrl}/servicios/precios-actualizados`, { ultimaConsulta });
+}
+
+//Pasarela de Pago 
+obtenerDetallesTransaccion(idServicio: number, idUsuario: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/detalles/${idServicio}/${idUsuario}`);
+}
+//chat  obtenerCitasPorFecha
 
 sendMessage(history: any[], question: string): Observable<any> {
   const body = { history, question };
-  return this.http.post<any>(this.apiUrl2, body);
-  }
+  const apiUrl = this.apiUrl + '/chat'; // Concatenar la ruta correcta
+  return this.http.post<any>(apiUrl, body);
+}
+
   authenticatedRequest(endpoint: string, data: any): Observable<any> {
     const token = localStorage.getItem('token');
     console.log(token);

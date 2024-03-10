@@ -1,8 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { UsuarioService } from 'src/app/service/usuario.service';
-import { CalendarView, CalendarWeekViewComponent } from 'angular-calendar';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
+
+declare var ePayco: any;
 
 @Component({
   selector: 'app-opciones-manicura',
@@ -10,7 +11,6 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./opciones-manicura.component.css']
 })
 export class OpcionesManicuraComponent implements OnInit {
-  // Propiedades del componente
   manicuristas: any[] = [];
   servicios: any[] = [];
   filas: any[] = [];
@@ -25,40 +25,35 @@ export class OpcionesManicuraComponent implements OnInit {
   usuarioInfo: any;
   favoritoSeleccionado: boolean = false;
   fechaHoraSeleccionada: string = '';
-  horaSeleccionada: string = ''; 
+  horaSeleccionada: string = '';
   horasDisponibles: string[] = [];
-  
-  // Otras propiedades del componente
-  @ViewChild('calendar') calendar!: CalendarWeekViewComponent;
+  idServicio: number = 0;
+
   @ViewChild('fechaInput', { static: true }) fechaInput!: ElementRef;
 
-
   constructor(private usuarioService: UsuarioService, private datePipe: DatePipe) {}
-  
+
   ngOnInit(): void {
-    // Obtener los manicuristas y la información del usuario
     this.usuarioService.getManicuristas().subscribe(
       (manicuristas) => {
         this.manicuristas = manicuristas.map(manicurista => ({ ...manicurista, favorito: false }));
-        console.log('Manicuristas cargados:', this.manicuristas);
       },
       (error) => {
         console.error('Error al obtener manicuristas:', error);
       }
     );
+
+    this.loadEPaycoScript();
+
     this.usuarioService.usuarioInfo$.subscribe(usuario => {
       this.usuarioInfo = usuario;
     });
-    
+
     this.usuarioService.getConfiguracion().subscribe(
       (response) => {
-        console.log('Response:', response);
         if (Array.isArray(response.servicios)) {
           this.servicios = response.servicios;
-          console.log('Servicios cargados:', this.servicios);
-          // Dividir los servicios en filas
           this.filas = this.chunkArray(this.servicios, 4);
-          console.log('Filas:', this.filas);
         } else {
           console.error('La propiedad servicios de la respuesta de getConfiguracion no es un arreglo:', response.servicios);
         }
@@ -66,18 +61,28 @@ export class OpcionesManicuraComponent implements OnInit {
       (error) => {
         console.error('Error al obtener servicios:', error);
       }
-    );    
-    this.actualizarHorasDisponibles();
+    );
 
+    this.actualizarHorasDisponibles();
   }
+
   actualizarHorasDisponibles() {
     const horasDisponibles = [];
     for (let i = 9; i <= 17; i++) {
-      const hora = i < 10 ? `0${i}:00` : `${i}:00`; // Formato HH:00
+      const hora = i < 10 ? `0${i}:00` : `${i}:00`;
       horasDisponibles.push(hora);
     }
     this.horasDisponibles = horasDisponibles;
     this.horaSeleccionada = this.horasDisponibles[0];
+  }
+
+  loadEPaycoScript() {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.epayco.co/checkout.js';
+    script.onload = () => {
+      console.log('Script de ePayco cargado correctamente.');
+    };
+    document.body.appendChild(script);
   }
 
   chunkArray(arr: any[], size: number): any[] {
@@ -104,6 +109,7 @@ export class OpcionesManicuraComponent implements OnInit {
   cerrarCalendarioModal() {
     this.calendarioModalAbierta = false;
   }
+
   cerrarTodasModales() {
     this.modalAbierta = false;
     this.calendarioModalAbierta = false;
@@ -116,8 +122,6 @@ export class OpcionesManicuraComponent implements OnInit {
 
   marcarComoFavorita(manicurista: any) {
     manicurista.favorito = !manicurista.favorito;
-    console.log('Manicurista después de marcar como favorito:', manicurista);
-    console.log('Valor de favorito después de hacer clic:', manicurista.favorito);
   }
 
   seleccionarTipoServicio(tipoServicio: string) {
@@ -125,7 +129,11 @@ export class OpcionesManicuraComponent implements OnInit {
     this.calcularDuracionEnHoras();
     this.verificarSeleccion();
     this.opcionSeleccionada = tipoServicio;
-    console.log('Tipo de servicio seleccionado:', tipoServicio);
+  }
+
+  seleccionarServicio(servicio: any) {
+    this.idServicio = servicio.id_servicio;
+    this.abrirModal(servicio.tipo_servicio);
   }
 
   calcularDuracionEnHoras() {
@@ -139,30 +147,15 @@ export class OpcionesManicuraComponent implements OnInit {
   }
 
   verificarSeleccion() {
-    // Verificar si tanto la ubicación como la manicurista han sido seleccionadas y que la manicurista no sea null
     this.siguienteHabilitado = !!this.tipoServicioSeleccionado && !!this.manicuristaSeleccionada && !!this.ubicacionServicio;
   }
-  
 
-  @Output() siguiente = new EventEmitter<void>();
   siguientePaso() {
     if (this.siguienteHabilitado) {
-      if (!this.manicuristaSeleccionada || !('idmanicurista' in this.manicuristaSeleccionada)) {
+      if (!this.manicuristaSeleccionada || !('id_manicurista' in this.manicuristaSeleccionada)) {
         console.error('Manicurista seleccionado inválido');
         return;
       }
-      const datosCita = {
-        id_usuario: this.usuarioInfo.id,
-        id_manicurista: this.manicuristaSeleccionada.idmanicurista,
-        tipo_servicio: this.tipoServicioSeleccionado,
-        ubicacion_servicio: this.ubicacionServicio,
-        duracion_en_horas: this.duracionEnHoras,
-        favorito: this.manicuristaSeleccionada.favorito,
-        fecha_del_servicio: this.fechaHoraSeleccionada, // Usar la fecha y hora seleccionadas
-        estado: 'programada'
-      };
-
-      console.log('Datos de la cita:', datosCita);
 
       this.cerrarModal();
       this.abrirCalendarioModal();
@@ -171,7 +164,6 @@ export class OpcionesManicuraComponent implements OnInit {
 
   agendarCita() {
     if (this.siguienteHabilitado) {
-      // Obtener la fecha y hora seleccionadas del input
       const fechaHoraSeleccionada = new Date(this.fechaHoraSeleccionada);
       const datosCita = {
         id_usuario: this.usuarioInfo.id,
@@ -180,42 +172,75 @@ export class OpcionesManicuraComponent implements OnInit {
         ubicacion_servicio: this.ubicacionServicio,
         duracion_en_horas: this.duracionEnHoras,
         favorito: this.manicuristaSeleccionada?.favorito,
-        fecha_del_servicio: this.formatDateTime(fechaHoraSeleccionada), // Formatear fecha y hora seleccionadas
+        fecha_del_servicio: this.formatDateTime(fechaHoraSeleccionada),
         estado: 'programada'
       };
+  
       console.log('Datos de la cita a enviar:', datosCita);
-
-      this.usuarioService.createCita(datosCita).subscribe(
-        (response) => {
-          Swal.fire({
-            title: '¡Cita agendada!',
-            text: 'La cita se ha agendado correctamente.',
-            icon: 'success',
-            iconColor: '#631878'
-          });
-          
+  
+      // Realizar el pago
+      this.usuarioService.obtenerDetallesTransaccion(this.idServicio, this.usuarioInfo.id).subscribe(
+        (data) => {
+          console.log('Detalles de la transacción:', data);
+          this.iniciarProcesoDePago(data, this.idServicio);
+          // Marcar la cita como agendada después de completar el pago
+          this.usuarioService.createCita(datosCita).subscribe(
+            (response) => {
+              Swal.fire({
+                title: '¡Cita agendada!',
+                text: 'La cita se ha agendado correctamente.',
+                icon: 'success',
+                iconColor: '#631878'
+              });
+            },
+            (error) => {
+              console.error('Error al agendar la cita:', error);
+              Swal.fire('Error', 'Hubo un problema al agendar la cita. Por favor, inténtalo de nuevo.', 'error');
+            },
+            () => {
+              this.cerrarTodasModales();
+              this.favoritoSeleccionado = true;
+            }
+          );
         },
         (error) => {
-          console.error('Error al agendar la cita:', error);
-          Swal.fire('Error', 'Hubo un problema al agendar la cita. Por favor, inténtalo de nuevo.', 'error');
-        },
-        () => {
-          this.cerrarModal();
-          this.abrirCalendarioModal();
-          this.cerrarTodasModales();
-          this.favoritoSeleccionado = true;
+          console.error('Error al obtener detalles de la transacción:', error);
         }
       );
     }
   }
+  
+  
 
   formatDateTime(date: any): string {
     if (!(date instanceof Date)) {
       console.error('El valor proporcionado no es una instancia de Date:', date);
-      return ''; // O manejar el error de otra manera
+      return '';
     }
     const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'America/Bogota');
     return formattedDate ? formattedDate : '';
   }
-  
+
+  realizarPago() {
+    this.usuarioService.obtenerDetallesTransaccion(this.idServicio, this.usuarioInfo.id).subscribe(
+      (data) => {
+        console.log('Detalles de la transacción:', data);
+        this.iniciarProcesoDePago(data, this.idServicio);
+      },
+      (error) => {
+        console.error('Error al obtener detalles de la transacción:', error);
+      }
+    );
+  }
+
+  iniciarProcesoDePago(data: any, idServicio: number) {
+    var handler = ePayco.checkout.configure({
+      key: 'a6f86157c75795fdc8e81242b0e20aad',
+      test: true
+    });
+
+    data.idServicio = idServicio;
+
+    handler.open(data);
+  }
 }

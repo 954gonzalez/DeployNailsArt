@@ -37,12 +37,42 @@
 .body-Chat{
     background-color: white;
     height: 100%;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    border: 1px solid #ccc;
 }
 .close-icon {
     cursor: pointer;
     font-size: 20px;
     color: white;
   }
+
+ .message{
+    border-radius: 20px;
+    background-color:rgba(99, 24, 120, 0.5); /* El último valor (0.5) representa la transparencia */
+    color: white;
+    margin-top: 20px;
+    margin-left: 20px;
+    padding-top: 8px;
+    padding-left: 10px;
+} 
+
+.user-message {
+    text-align: right;
+    background-color: rgba(99, 24, 120, 0.5); /* Cambiar al color deseado */
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 10px;
+}
+
+.model-message {
+    text-align: left;
+    background-color: rgba(99, 24, 120, 0.5); /* Cambiar al color deseado */
+    color: white;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 10px;
+}
   
 .footer-Chat{
     background-color: rgba(99, 24, 120, 0.5); /* El último valor (0.5) representa la transparencia */

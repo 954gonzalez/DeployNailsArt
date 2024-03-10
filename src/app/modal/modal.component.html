@@ -1,25 +1,27 @@
-<div class="contenedorPrincipalModal">
-  <div class="contenedorHijoModal">
-    <h2>Citas para {{ data.selectedDate | date:'dd/MM/yyyy' }}</h2>
-    <ul>
-      <li *ngFor="let cita of citas; let i = index">
-        <div class="cita-item">
-          <div class="cita-info">
-            {{ cita.fecha_hora_inicio | date:'HH:mm' }} - {{ cita.fecha_hora_fin | date:'HH:mm' }}
-            {{ cita.estado }}
-            <br />
-            Usuario: {{ cita.usuario_nombre }} | Manicurista: {{ cita.manicurista_nombre }} | Servicio: {{ cita.tipo_servicio }} Hora: {{cita.fecha_del_servicio | date:'HH:mm'}}
-            <!-- Agregar detalles específicos de la cita para la manicurista -->
-            <!-- Por ejemplo, puedes mostrar la ubicación del servicio, la duración, etc. -->
-            <br />
-            Ubicación del servicio: {{ cita.ubicacion_servicio }} | Duración: {{ cita.duracion_en_horas }} horas
-          </div>
-          <div class="botones-acciones">
-            <button class="boton-realizada" (click)="cambiarEstado(cita.id_cita, 'realizada', i)">Realizada</button>
-            <button *ngIf="cita.estado !== 'cancelada' && cita.canceladaVisible" class="boton-cancelada" (click)="eliminarCita(i)">Cancelada</button>
-          </div>
-        </div>
-      </li>
-    </ul>
+<div  class="contenedorPrincipalModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Citas para {{ data.selectedDate | date:'dd/MM/yyyy' }}</h2>
+    </div>
+    <div class="modal-body">
+      <ul>
+        <li *ngFor="let cita of citas; let i = index">
+          <div class="cita-item">
+            <div class="cita-info">
+              {{ cita.fecha_hora_inicio | date:'HH:mm' }} - {{ cita.fecha_hora_fin | date:'HH:mm' }}
+              {{ cita.estado }}
+              <br />
+              Usuario: {{ cita.usuario_nombre }} | Manicurista: {{ cita.manicurista_nombre }} | Servicio: {{ cita.tipo_servicio }} Hora: {{cita.fecha_del_servicio | date:'h:mm a'}}
+              <br />
+              <span *ngIf="cita.ubicacion_servicio">Ubicación del servicio: {{ cita.ubicacion_servicio }}</span>
+            </div>
+            <div class="botones-acciones">
+              <button class="boton-realizada" (click)="cambiarEstado(cita.id_cita, 'realizada', i)">Realizada</button>
+              <button *ngIf="cita.estado !== 'cancelada' && cita.canceladaVisible" class="boton-cancelada" (click)="eliminarCita(cita.id_cita)">Cancelada</button>
+            </div>
+          </div>          
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
