@@ -74,6 +74,11 @@ i{overflow:hidden;}
     padding-inline: 0.5em;
     padding-block: 0.7em;
     border: none;
+    text-align: center;
+  }
+
+  .input ::placeholder{
+    margin-bottom: 10px;
   }
   /* styling of animated border */
   .form:before {
@@ -178,22 +183,26 @@ table {
   .input-container {
     position: relative;
     display: flex;
-    align-items: center;
+    margin-left: 36px;
   } 
   .form-group {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    margin-top: 10px;
   }
   
   .input-container {
     width: calc(48% - 10px);
     display: flex;
     flex-direction: column;
+    
   }
   
   .input-container label {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
+    margin-top: 3px;
+    text-align: center;
   }
   
   .form__group {
@@ -205,7 +214,7 @@ table {
   
   .form__field {
     font-family: inherit;
-    width: 100%;
+    width: 80%;
     border: none;
     border-bottom: 2px solid #a14bb9;
     outline: 0;
@@ -214,10 +223,12 @@ table {
     padding: 7px 0;
     background: transparent;
     transition: border-color 0.2s;
+    margin-top: 13px;
   }
   
   .form__field::placeholder {
     color: transparent;
+    margin-bottom: 10px;
   }
   
   .form__field:placeholder-shown ~ .form__label {
@@ -261,7 +272,8 @@ table {
   
   .button-container {
     text-align: end;
-    margin-right: 30px;
+    margin-right: 45px;
+    margin-top: 15px;
   }
 
   .py-3 {
@@ -272,3 +284,48 @@ table {
     cursor: pointer;
     background-image: linear-gradient(135deg, rgb(217, 105, 255) 0%, rgb(190, 10, 255) 100%);
   }
+
+ 
+  .custom-file-upload {
+  display: inline-block;
+  cursor: pointer;
+  padding: 10px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+width: 170px;
+margin-top: 15px;
+}
+
+.custom-file-upload:hover {
+  background-color: #45a049;
+}
+
+.selected-file-name {
+  margin-top: 0px;
+  margin-bottom: 50px;
+  margin-left: 20px;
+  padding-bottom: 50px;
+  color: #631878;
+}
+
+
+  
+  .custom-file-upload {
+    border: 2px solid #a14bb9; /* Borde del botón */
+    color: #a14bb9; /* Color del texto */
+    background-color: transparent; /* Fondo transparente */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño del texto */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    border-radius: 5px; /* Borde redondeado */
+    transition: all 0.3s ease; /* Transición suave */
+  }
+  
+  .custom-file-upload:hover {
+    background-color: #a14bb9; /* Cambia el color de fondo al pasar por encima */
+    color: white; /* Cambia el color del texto al pasar por encima */
+  }
+  
