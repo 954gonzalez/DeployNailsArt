@@ -1,26 +1,24 @@
 <app-header></app-header>
 
 <div class="contenedorPrincipal">
-  <button
-  class="py-3 px-6 rounded-lg text-white"
-  style="background-image: linear-gradient(135deg, rgb(217, 105, 255) 0%, rgb(190, 10, 255) 100%);"
-  (click)="abrirModal()"
->
-Agregar Manicurista
-</button>
-<form class="form" (submit)="buscarManicuristas(); $event.preventDefault()" novalidate>
-  <button class="btn" type="submit">
-    <svg class="lupa" width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
-      <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"></path>
-    </svg>
+  <button class="py-3 px-6 rounded-lg text-white"
+          style="background-image: linear-gradient(135deg, rgb(217, 105, 255) 0%, rgb(190, 10, 255) 100%);"
+          (click)="abrirModal()">
+    Agregar Manicurista
   </button>
-  <input class="input" placeholder="Buscar Manicurista" required="" type="text" [(ngModel)]="nombreABuscar" (input)="onSearchTermChange()" name="nombreABuscar">
-  <button class="reset" type="reset">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-    </svg>
-  </button>
-</form>
+  <form class="form" (submit)="buscarManicuristas(); $event.preventDefault()" novalidate>
+    <button class="btn" type="submit">
+      <svg class="lupa" width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
+        <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+    <input class="input" placeholder="Buscar Manicurista" required="" type="text" [(ngModel)]="nombreABuscar" (input)="onSearchTermChange()" name="nombreABuscar">
+    <button class="reset" type="reset">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </form>
 </div>
 
 <div id="myModal" class="modal">
@@ -29,80 +27,72 @@ Agregar Manicurista
       <h2>{{ editMode ? 'Editar Manicurista' : 'Agregar Manicurista' }}</h2>
       <span class="close" (click)="cerrarModal()">&times;</span>
     </div>
-    <form (ngSubmit)="registrarManicurista()" enctype="multipart/form-data">
+    <form [formGroup]="form" (submit)="onSubmit()">
       <div class="form-group">
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Nombre" [(ngModel)]="manicurista.nombre" type="text" id="nombre" name="nombre" required>
-            <label for="name" class="form__label">Nombre</label>
-        </div>
+          <input class="form__field" placeholder="Nombre" formControlName="nombre" type="text" required>
+          <label class="form__label">Nombre</label>
         </div>
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Apellido" [(ngModel)]="manicurista.apellido" type="text" id="apellido" name="apellido" required>
-            <label for="name" class="form__label">Apellido</label>
+          <input class="form__field" placeholder="Apellido" formControlName="apellido" type="text" required>
+          <label class="form__label">Apellido</label>
         </div>
+      </div>
+
+      <input type="hidden" formControlName="id_manicurista" />
+      <div class="form-group">
+        <div class="input-container">
+          <input class="form__field" placeholder="Email Personal" formControlName="emailPersonal" type="email" required>
+          <label class="form__label">Email Personal</label>
+        </div>
+        <div class="input-container">
+          <input class="form__field" placeholder="Email de la app" formControlName="emailApp" type="email" required>
+          <label class="form__label">Email de la app</label>
         </div>
       </div>
       <div class="form-group">
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Email Personal" [(ngModel)]="manicurista.emailPersonal" type="email" id="email" name="email" required>
-            <label for="name" class="form__label">Email Personal</label>
-        </div>
+          <input class="form__field" placeholder="Contraseña" formControlName="contrasenaApp" type="password" required>
+          <label class="form__label">Contraseña</label>
         </div>
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Email de la app" [(ngModel)]="manicurista.emailApp" type="email" id="email" name="email" required>
-            <label for="name" class="form__label">Email de la app</label>
-        </div>
+          <input class="form__field" placeholder="Celular" formControlName="celular" type="text" required>
+          <label class="form__label">Celular</label>
         </div>
       </div>
       <div class="form-group">
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Contraseña" [(ngModel)]="manicurista.contrasenaApp" type="password" id="contrasena" name="contrasena" required>
-            <label for="name" class="form__label">Contraseña</label>
-        </div>
+          <input class="form__field" placeholder="Dirección" formControlName="direccion" type="text">
+          <label class="form__label">Dirección</label>
         </div>
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Celular" [(ngModel)]="manicurista.celular" type="text" id="celular" name="celular" required>
-            <label for="name" class="form__label">Celular</label>
-        </div>
+          <label class="form__label">Descripción:</label>
+          <textarea class="form__field" formControlName="descripcion" rows="4"></textarea>
         </div>
       </div>
       <div class="form-group">
         <div class="input-container">
-          <div class="form__group field">
-            <input class="form__field" placeholder="Dirección" [(ngModel)]="manicurista.direccion" type="text" id="direccion" name="direccion">
-            <label for="name" class="form__label">Dirección</label>
+          <input type="file" (change)="onFileSelected($event)" id="fileInput" style="display: none" accept=".jpg,.jpeg,.png">
+<label for="fileInput" class="custom-file-upload">
+  <i class="fas fa-cloud-upload-alt"></i> Seleccionar archivo
+</label>
+
+<p *ngIf="selectedFileName" class="selected-file-name">Archivo seleccionado: {{ selectedFileName }}</p> 
         </div>
-        </div>
-        <div class="input-container">
-          <div class="form__group field">
-            <label for="descripcion" class="form__label">Descripción:</label>
-          <textarea class="form__field" [(ngModel)]="manicurista.descripcion" id="descripcion" name="descripcion" rows="4" required></textarea>
-        </div>
-        </div>
-      </div>
+
+        
+        
+      
       <div class="button-container">
-        <button
-        class="py-3 px-6 rounded-lg text-white"
-        style="background-image: linear-gradient(135deg, rgb(217, 105, 255) 0%, rgb(190, 10, 255) 100%);"
-        (click)="abrirModal()"
-        type="submit">{{ editMode ? 'Editar' : 'Agregar' }}
-      </button>
+        <button class="py-3 px-6 rounded-lg text-white"
+                style="background-image: linear-gradient(135deg, rgb(217, 105, 255) 0%, rgb(190, 10, 255) 100%);"
+                type="submit">{{ editMode ? 'Editar' : 'Agregar' }}
+        </button>
       </div>
-      <div class="form-group">
-        <div class="input-container">
-          <input type="file" (change)="onFileSelected($event)" accept="image/*">
-        </div>
-      </div>
+    </div>
     </form>
   </div>
 </div>
-
 
 <table>
   <thead>
@@ -125,9 +115,11 @@ Agregar Manicurista
       <td>{{ manicurista.direccion }}</td>
       <td>{{ manicurista.descripcion }}</td>
       <td>
-        <button class="btn-editar" (click)="editarManicurista(manicurista)">Editar  </button>
+        <button class="btn-editar" (click)="editarManicurista(manicurista)">Editar</button>
         <button class="btn-desactivar" (click)="eliminarManicurista(manicurista.id_manicurista)">Eliminar</button>
       </td>
     </tr>
   </tbody>
 </table>
+
+
